@@ -50,7 +50,7 @@ describe('updateSession middleware', () => {
     const response = await updateSession(request)
 
     expect(response.status).toBe(307)
-    expect(response.headers.get('location')).toContain('/login')
+    expect(response.headers.get('location')).toBe('http://localhost/login')
   })
 
   it('redirects authenticated user visiting /login to /dashboard', async () => {
@@ -68,7 +68,7 @@ describe('updateSession middleware', () => {
     const response = await updateSession(request)
 
     expect(response.status).toBe(307)
-    expect(response.headers.get('location')).toContain('/dashboard')
+    expect(response.headers.get('location')).toBe('http://localhost/dashboard')
   })
 
   it('redirects authenticated user visiting /signup to /dashboard', async () => {
@@ -86,6 +86,40 @@ describe('updateSession middleware', () => {
     const response = await updateSession(request)
 
     expect(response.status).toBe(307)
-    expect(response.headers.get('location')).toContain('/dashboard')
+    expect(response.headers.get('location')).toBe('http://localhost/dashboard')
+  })
+
+  it('does not redirect unauthenticated user visiting /login (auth page pass-through)', async () => {
+    const { createServerClient } = await import('@supabase/ssr')
+    vi.mocked(createServerClient).mockReturnValue({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({ data: { user: null } }),
+      },
+    } as never)
+
+    const { updateSession } = await import('@/lib/supabase/middleware')
+    const request = makeRequest('/login')
+    const response = await updateSession(request)
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('location')).toBeNull()
+  })
+
+  it('does not redirect authenticated user visiting / (non-auth, non-protected page pass-through)', async () => {
+    const { createServerClient } = await import('@supabase/ssr')
+    vi.mocked(createServerClient).mockReturnValue({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: 'user-123', email: 'test@example.com' } },
+        }),
+      },
+    } as never)
+
+    const { updateSession } = await import('@/lib/supabase/middleware')
+    const request = makeRequest('/')
+    const response = await updateSession(request)
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('location')).toBeNull()
   })
 })
