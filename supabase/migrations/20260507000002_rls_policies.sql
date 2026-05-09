@@ -14,7 +14,9 @@ create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
 
 create policy "profiles_update_own" on public.profiles
-  for update using (auth.uid() = id);
+  for update
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
 
 -- courses, chapters, lessons, problems: 로그인 사용자 전체 읽기
 create policy "courses_select_authenticated" on public.courses
@@ -31,15 +33,21 @@ create policy "problems_select_authenticated" on public.problems
 
 -- user_progress: 본인만 전체 접근
 create policy "user_progress_all_own" on public.user_progress
-  for all using (auth.uid() = user_id);
+  for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- wrong_answers: 본인만 전체 접근
 create policy "wrong_answers_all_own" on public.wrong_answers
-  for all using (auth.uid() = user_id);
+  for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- review_queue: 본인만 전체 접근
 create policy "review_queue_all_own" on public.review_queue
-  for all using (auth.uid() = user_id);
+  for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- xp_logs: 본인만 읽기/삽입
 create policy "xp_logs_select_own" on public.xp_logs

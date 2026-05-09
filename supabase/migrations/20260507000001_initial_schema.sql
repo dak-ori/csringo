@@ -8,7 +8,7 @@ create table public.profiles (
   last_lesson_date date,
   total_xp int not null default 0,
   level int not null default 1,
-  league text not null default 'bronze',
+  league text not null default 'bronze' check (league in ('bronze', 'silver', 'gold', 'diamond')),
   created_at timestamptz not null default now()
 );
 
@@ -38,7 +38,7 @@ create table public.lessons (
   cards jsonb not null default '[]',
   concept_tags text[] not null default '{}',
   order_index int not null,
-  xp_reward int not null default 15,
+  xp_reward int not null default 15 check (xp_reward > 0),
   estimated_minutes int not null default 7
 );
 
@@ -52,7 +52,7 @@ create table public.problems (
   hint text,
   concept_tags text[] not null default '{}',
   order_index int not null,
-  xp_reward int not null default 5
+  xp_reward int not null default 5 check (xp_reward > 0)
 );
 
 -- user_progress
@@ -84,7 +84,8 @@ create table public.review_queue (
   problem_id uuid references public.problems(id) on delete cascade not null,
   priority int not null default 1,
   added_at timestamptz not null default now(),
-  reviewed_at timestamptz
+  reviewed_at timestamptz,
+  unique (user_id, problem_id)
 );
 
 -- xp_logs
@@ -101,10 +102,11 @@ create table public.xp_logs (
 create index on public.user_progress (user_id);
 create index on public.user_progress (lesson_id, user_id);
 create index on public.wrong_answers (user_id, last_wrong_at desc);
-create index on public.review_queue (user_id, reviewed_at);
+create index on public.review_queue (user_id, priority desc, added_at);
 create index on public.xp_logs (user_id, created_at desc);
 create index on public.problems (lesson_id);
 create index on public.chapters (course_id);
+create index on public.lessons (chapter_id);
 
 -- 신규 사용자 가입 시 profile 자동 생성 트리거
 create or replace function public.handle_new_user()
@@ -117,6 +119,7 @@ begin
   values (
     new.id,
     coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1))
+      || '_' || substr(new.id::text, 1, 6)
   );
   return new;
 end;
