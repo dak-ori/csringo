@@ -59,7 +59,7 @@ export default async function DashboardPage() {
     `)
     .order('order_index')
 
-  const sortedLessons = ((allLessons ?? []) as LessonWithChapter[]).sort((a, b) => {
+  const sortedLessons = ((allLessons ?? []) as unknown as LessonWithChapter[]).sort((a, b) => {
     const ca = a.chapter?.course?.order_index ?? 0
     const cb = b.chapter?.course?.order_index ?? 0
     if (ca !== cb) return ca - cb

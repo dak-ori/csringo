@@ -1,0 +1,54 @@
+{
+  "course_slug": "network",
+  "slug": "tcp-ip",
+  "title": "TCP/IP",
+  "order_index": 1,
+  "lessons": [
+    {
+      "slug": "tcp-handshake",
+      "title": "TCP 3-way Handshake",
+      "order_index": 1,
+      "estimated_minutes": 7,
+      "xp_reward": 15,
+      "concept_tags": ["tcp", "handshake", "connection"],
+      "cards": [
+        {
+          "title": "TCP란",
+          "content": "TCP(Transmission Control Protocol)는 **연결 지향**, **신뢰성 있는** 전송 프로토콜입니다.\n\n| | TCP | UDP |\n|--|-----|-----|\n| 연결 | 필요 | 불필요 |\n| 신뢰성 | 보장 | 미보장 |\n| 속도 | 느림 | 빠름 |\n| 예시 | HTTP, 파일 전송 | 스트리밍, 게임 |"
+        },
+        {
+          "title": "3-way Handshake",
+          "content": "TCP 연결 수립 과정:\n\n```\n클라이언트           서버\n    |-- SYN --------->|\n    |<-- SYN-ACK -----|\n    |-- ACK --------->|\n    (연결 수립 완료)\n```\n\n1. **SYN:** 클라이언트가 연결 요청\n2. **SYN-ACK:** 서버가 수락 + 자신의 연결 요청\n3. **ACK:** 클라이언트가 수락 확인"
+        }
+      ],
+      "problems": [
+        {
+          "type": "drag_order",
+          "content": {
+            "question": "TCP 3-way Handshake 순서를 맞추세요.",
+            "items": ["클라이언트 → 서버: SYN", "서버 → 클라이언트: SYN-ACK", "클라이언트 → 서버: ACK"]
+          },
+          "correct_answer": ["클라이언트 → 서버: SYN", "서버 → 클라이언트: SYN-ACK", "클라이언트 → 서버: ACK"],
+          "hint": null,
+          "concept_tags": ["tcp", "handshake"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "TCP 연결 종료 (4-way Handshake) 흐름",
+            "steps": ["클라이언트 → FIN 전송", "___", "서버 → FIN 전송 후 클라이언트 ACK로 종료"],
+            "blank_index": 1,
+            "options": ["서버 → ACK 전송 (데이터 전송 완료까지 대기)", "서버 → RST 전송 (즉시 강제 종료)", "클라이언트 → FIN 재전송"]
+          },
+          "correct_answer": ["서버 → ACK 전송 (데이터 전송 완료까지 대기)"],
+          "hint": "TCP 종료는 4단계: FIN → ACK → FIN → ACK",
+          "concept_tags": ["tcp"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}

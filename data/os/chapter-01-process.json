@@ -1,0 +1,52 @@
+{
+  "course_slug": "os",
+  "slug": "process-thread",
+  "title": "프로세스와 스레드",
+  "order_index": 1,
+  "lessons": [
+    {
+      "slug": "process-vs-thread",
+      "title": "프로세스 vs 스레드",
+      "order_index": 1,
+      "estimated_minutes": 8,
+      "xp_reward": 15,
+      "concept_tags": ["process", "thread", "context-switch"],
+      "cards": [
+        {
+          "title": "프로세스란",
+          "content": "프로세스(Process)는 **실행 중인 프로그램**입니다.\n\n각 프로세스는 독립된 메모리 공간을 가집니다:\n- **코드 영역:** 실행할 명령어\n- **데이터 영역:** 전역 변수\n- **힙(Heap):** 동적 할당 메모리\n- **스택(Stack):** 지역 변수, 함수 호출"
+        },
+        {
+          "title": "스레드란",
+          "content": "스레드(Thread)는 프로세스 내에서 실행되는 **실행 단위**입니다.\n\n| | 프로세스 | 스레드 |\n|--|---------|--------|\n| 메모리 | 독립적 | 공유 (힙/데이터) |\n| 생성 비용 | 높음 | 낮음 |\n| 통신 | IPC 필요 | 메모리 공유 |\n| 안정성 | 높음 | 낮음 (하나 죽으면 전체) |"
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "스레드는 같은 프로세스 내에서 ___ 영역과 ___ 영역을 공유합니다.",
+            "blank_count": 2
+          },
+          "correct_answer": ["힙", "데이터"],
+          "hint": "스택은 각 스레드가 독립적으로 가집니다.",
+          "concept_tags": ["thread"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "drag_order",
+          "content": {
+            "question": "컨텍스트 스위칭(Context Switching) 단계를 순서대로 정렬하세요.",
+            "items": ["현재 프로세스 상태(레지스터 등) 저장", "다음 실행할 프로세스 결정", "저장된 다음 프로세스 상태 복원"]
+          },
+          "correct_answer": ["현재 프로세스 상태(레지스터 등) 저장", "다음 실행할 프로세스 결정", "저장된 다음 프로세스 상태 복원"],
+          "hint": null,
+          "concept_tags": ["context-switch"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}

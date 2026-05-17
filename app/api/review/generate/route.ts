@@ -28,7 +28,7 @@ export async function POST() {
 
   const conceptSummary = wrongAnswers
     .map(wa => {
-      const problem = wa.problem as { concept_tags: string[]; type: string } | null
+      const problem = wa.problem as unknown as { concept_tags: string[]; type: string } | null
       return `- 문제 ID: ${wa.problem_id}, 틀린 횟수: ${wa.wrong_count}, 개념: ${problem?.concept_tags?.join(', ') ?? '알 수 없음'}`
     })
     .join('\n')

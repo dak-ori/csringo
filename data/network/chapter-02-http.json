@@ -1,0 +1,54 @@
+{
+  "course_slug": "network",
+  "slug": "http",
+  "title": "HTTP",
+  "order_index": 2,
+  "lessons": [
+    {
+      "slug": "http-basics",
+      "title": "HTTP 기초",
+      "order_index": 1,
+      "estimated_minutes": 7,
+      "xp_reward": 15,
+      "concept_tags": ["http", "request", "response", "status-code"],
+      "cards": [
+        {
+          "title": "HTTP란",
+          "content": "HTTP(HyperText Transfer Protocol)는 웹에서 데이터를 주고받는 프로토콜입니다.\n\n**요청 메서드:**\n- `GET` — 리소스 조회\n- `POST` — 리소스 생성\n- `PUT/PATCH` — 리소스 수정\n- `DELETE` — 리소스 삭제"
+        },
+        {
+          "title": "HTTP 상태 코드",
+          "content": "| 범위 | 의미 | 예시 |\n|------|------|------|\n| 2xx | 성공 | 200 OK, 201 Created |\n| 3xx | 리다이렉션 | 301 Moved, 304 Not Modified |\n| 4xx | 클라이언트 오류 | 400 Bad Request, 401 Unauthorized, 404 Not Found |\n| 5xx | 서버 오류 | 500 Internal Server Error |"
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "HTTP에서 리소스를 조회할 때는 ___ 메서드를, 생성할 때는 ___ 메서드를 사용합니다.",
+            "blank_count": 2
+          },
+          "correct_answer": ["GET", "POST"],
+          "hint": "CRUD에서 R=GET, C=POST입니다.",
+          "concept_tags": ["http", "request"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "브라우저가 웹 페이지를 요청하는 흐름",
+            "steps": ["URL 입력 → DNS로 IP 주소 조회", "___", "서버가 HTTP 응답(HTML) 반환"],
+            "blank_index": 1,
+            "options": ["TCP 연결 수립 후 HTTP GET 요청 전송", "UDP로 바로 HTTP 요청 전송", "IP 주소로 바로 HTML 파일 요청"]
+          },
+          "correct_answer": ["TCP 연결 수립 후 HTTP GET 요청 전송"],
+          "hint": "HTTP는 TCP 위에서 동작합니다.",
+          "concept_tags": ["http", "tcp"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}

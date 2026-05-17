@@ -1,0 +1,54 @@
+{
+  "course_slug": "os",
+  "slug": "memory-management",
+  "title": "메모리 관리",
+  "order_index": 2,
+  "lessons": [
+    {
+      "slug": "virtual-memory",
+      "title": "가상 메모리 (Virtual Memory)",
+      "order_index": 1,
+      "estimated_minutes": 8,
+      "xp_reward": 15,
+      "concept_tags": ["virtual-memory", "paging", "page-fault"],
+      "cards": [
+        {
+          "title": "가상 메모리란",
+          "content": "가상 메모리는 물리 메모리(RAM)보다 더 큰 주소 공간을 프로세스에 제공하는 기법입니다.\n\n- 각 프로세스는 연속된 메모리를 가진 것처럼 동작\n- 실제로는 디스크(스왑 영역)를 RAM처럼 사용\n- **페이지(Page):** 가상 메모리의 고정 크기 블록"
+        },
+        {
+          "title": "페이지 폴트 (Page Fault)",
+          "content": "접근하려는 페이지가 RAM에 없을 때 발생합니다.\n\n**처리 과정:**\n1. CPU가 페이지 폴트 인터럽트 발생\n2. OS가 디스크에서 해당 페이지를 RAM으로 로드\n3. 프로세스 실행 재개\n\n페이지 폴트가 많으면 **스래싱(Thrashing)** 발생 → 성능 급락."
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "가상 메모리에서 물리 RAM에 없는 페이지에 접근할 때 ___ 가 발생합니다.",
+            "blank_count": 1
+          },
+          "correct_answer": ["페이지 폴트"],
+          "hint": "OS가 디스크에서 해당 페이지를 RAM으로 불러옵니다.",
+          "concept_tags": ["page-fault"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "페이지 폴트 처리 흐름",
+            "steps": ["CPU가 가상 주소 접근 시도", "___", "OS가 디스크에서 페이지를 RAM으로 로드 후 재실행"],
+            "blank_index": 1,
+            "options": ["페이지가 RAM에 없으므로 페이지 폴트 인터럽트 발생", "페이지가 RAM에 있으므로 즉시 접근", "프로세스를 강제 종료"]
+          },
+          "correct_answer": ["페이지가 RAM에 없으므로 페이지 폴트 인터럽트 발생"],
+          "hint": null,
+          "concept_tags": ["page-fault", "virtual-memory"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "course_slug": "algorithms",
+  "slug": "sorting",
+  "title": "정렬 알고리즘",
+  "order_index": 1,
+  "lessons": [
+    {
+      "slug": "bubble-sort",
+      "title": "버블 정렬 (Bubble Sort)",
+      "order_index": 1,
+      "estimated_minutes": 7,
+      "xp_reward": 15,
+      "concept_tags": ["sorting", "bubble-sort", "time-complexity"],
+      "cards": [
+        {
+          "title": "버블 정렬이란",
+          "content": "버블 정렬은 인접한 두 원소를 비교해 순서가 잘못됐으면 교환하는 방식을 반복합니다.\n\n```\n[5, 3, 1, 4, 2]\n→ [3, 5, 1, 4, 2]  (5와 3 교환)\n→ [3, 1, 5, 4, 2]  (5와 1 교환)\n→ [3, 1, 4, 5, 2]  (5와 4 교환)\n→ [3, 1, 4, 2, 5]  (5와 2 교환, 1라운드 완료)\n```\n\n1라운드마다 가장 큰 값이 맨 뒤로 이동합니다."
+        },
+        {
+          "title": "버블 정렬 시간 복잡도",
+          "content": "| 케이스 | 시간 복잡도 |\n|--------|-------------|\n| 최선 | O(n) — 이미 정렬된 경우 |\n| 평균 | O(n²) |\n| 최악 | O(n²) |\n\n공간 복잡도: O(1) (제자리 정렬)\n\n**단점:** 실무에서는 거의 사용하지 않음. 개념 학습용."
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "버블 정렬의 평균/최악 시간 복잡도는 ___이고, 공간 복잡도는 ___입니다.",
+            "blank_count": 2
+          },
+          "correct_answer": ["O(n²)", "O(1)"],
+          "hint": "인접 비교를 n²번 수행, 추가 공간 불필요.",
+          "concept_tags": ["sorting", "time-complexity"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "버블 정렬 1라운드 동작 흐름",
+            "steps": ["첫 번째 원소부터 순서대로", "___", "교환이 없었으면 정렬 완료"],
+            "blank_index": 1,
+            "options": ["인접 원소 비교 후 순서 잘못되면 교환", "최솟값 찾아 맨 앞으로 이동", "절반씩 나눠 각각 정렬"]
+          },
+          "correct_answer": ["인접 원소 비교 후 순서 잘못되면 교환"],
+          "hint": null,
+          "concept_tags": ["sorting", "bubble-sort"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    },
+    {
+      "slug": "merge-sort",
+      "title": "병합 정렬 (Merge Sort)",
+      "order_index": 2,
+      "estimated_minutes": 8,
+      "xp_reward": 15,
+      "concept_tags": ["sorting", "merge-sort", "divide-conquer"],
+      "cards": [
+        {
+          "title": "병합 정렬이란",
+          "content": "병합 정렬은 **분할 정복(Divide & Conquer)** 방식의 정렬입니다.\n\n1. **분할:** 배열을 절반씩 재귀적으로 분할\n2. **정복:** 길이 1 배열은 이미 정렬됨\n3. **병합:** 두 정렬된 배열을 하나로 합침\n\n항상 O(n log n)을 보장합니다."
+        },
+        {
+          "title": "병합 정렬 특징",
+          "content": "| 항목 | 값 |\n|------|----|\n| 시간 복잡도 | O(n log n) (항상) |\n| 공간 복잡도 | O(n) (추가 배열 필요) |\n| 안정 정렬 | ✓ (같은 값의 순서 유지) |\n\n퀵 정렬보다 느리지만 최악 케이스에서도 O(n log n)."
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "병합 정렬의 시간 복잡도는 ___이고, 추가 공간이 ___만큼 필요합니다.",
+            "blank_count": 2
+          },
+          "correct_answer": ["O(n log n)", "O(n)"],
+          "hint": "분할 횟수(log n) × 병합 비용(n)",
+          "concept_tags": ["merge-sort", "time-complexity"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "drag_order",
+          "content": {
+            "question": "병합 정렬의 단계를 순서대로 정렬하세요.",
+            "items": ["배열을 절반으로 분할", "각 절반을 재귀적으로 정렬", "두 정렬된 절반을 병합"]
+          },
+          "correct_answer": ["배열을 절반으로 분할", "각 절반을 재귀적으로 정렬", "두 정렬된 절반을 병합"],
+          "hint": null,
+          "concept_tags": ["merge-sort", "divide-conquer"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}
