@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "data-structures",
+    "title": "자료구조",
+    "description": "배열, 스택, 해시 테이블 등 핵심 자료구조를 마스터합니다.",
+    "icon": "🗂️",
+    "order_index": 1
+  },
+  {
+    "slug": "algorithms",
+    "title": "알고리즘",
+    "description": "정렬, 탐색, 재귀 알고리즘의 원리를 익힙니다.",
+    "icon": "⚙️",
+    "order_index": 2
+  },
+  {
+    "slug": "os",
+    "title": "운영체제",
+    "description": "프로세스, 메모리, 파일 시스템을 이해합니다.",
+    "icon": "💻",
+    "order_index": 3
+  },
+  {
+    "slug": "network",
+    "title": "네트워크",
+    "description": "TCP/IP, HTTP, DNS의 동작 원리를 배웁니다.",
+    "icon": "🌐",
+    "order_index": 4
+  }
+]

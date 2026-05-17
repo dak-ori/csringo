@@ -1,0 +1,116 @@
+{
+  "course_slug": "data-structures",
+  "slug": "stacks-and-queues",
+  "title": "스택과 큐 (Stack & Queue)",
+  "order_index": 2,
+  "lessons": [
+    {
+      "slug": "stack-basics",
+      "title": "스택 (Stack)",
+      "order_index": 1,
+      "estimated_minutes": 7,
+      "xp_reward": 15,
+      "concept_tags": ["stack", "lifo", "call-stack"],
+      "cards": [
+        {
+          "title": "스택이란",
+          "content": "스택(Stack)은 **LIFO (Last In, First Out)** 구조입니다. 나중에 넣은 것이 먼저 나옵니다.\n\n```\n push(A) → [A]\n push(B) → [A, B]\n push(C) → [A, B, C]\n pop()   → C 반환, [A, B]\n```\n\n**실생활 예:** 브라우저 뒤로가기, 함수 호출 스택, Ctrl+Z"
+        },
+        {
+          "title": "스택의 시간 복잡도",
+          "content": "| 연산 | 시간 복잡도 |\n|------|-------------|\n| push (추가) | O(1) |\n| pop (제거) | O(1) |\n| peek (최상단 조회) | O(1) |\n| 탐색 | O(n) |"
+        },
+        {
+          "title": "콜 스택 (Call Stack)",
+          "content": "JavaScript 엔진은 함수 호출을 스택으로 관리합니다.\n\n```javascript\nfunction a() { b() }\nfunction b() { c() }\nfunction c() { console.log('hello') }\na()\n```\n\n콜 스택: [a] → [a, b] → [a, b, c] → [a, b] → [a] → []\n\n재귀 함수가 너무 깊으면 **Stack Overflow** 발생!"
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "스택은 ___ (Last In, First Out) 구조로, push와 pop 연산의 시간 복잡도는 모두 ___입니다.",
+            "blank_count": 2
+          },
+          "correct_answer": ["LIFO", "O(1)"],
+          "hint": "스택은 접시 쌓기와 같습니다.",
+          "concept_tags": ["stack", "lifo"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "drag_order",
+          "content": {
+            "question": "스택에 A, B, C를 순서대로 push한 후 pop을 2번 했을 때 순서를 맞추세요.",
+            "items": ["C가 먼저 pop됨", "B가 다음 pop됨", "스택에 A만 남음"]
+          },
+          "correct_answer": ["C가 먼저 pop됨", "B가 다음 pop됨", "스택에 A만 남음"],
+          "hint": null,
+          "concept_tags": ["stack", "lifo"],
+          "order_index": 2,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "괄호 유효성 검사 알고리즘 (스택 사용)",
+            "steps": ["문자열을 왼쪽부터 순회", "___", "닫는 괄호면 스택 top과 비교 후 pop 또는 invalid"],
+            "blank_index": 1,
+            "options": ["여는 괄호면 스택에 push", "닫는 괄호면 스택에 push", "모든 괄호를 스택에 push"]
+          },
+          "correct_answer": ["여는 괄호면 스택에 push"],
+          "hint": "여는 괄호는 저장하고, 닫는 괄호가 올 때 짝을 확인합니다.",
+          "concept_tags": ["stack"],
+          "order_index": 3,
+          "xp_reward": 5
+        }
+      ]
+    },
+    {
+      "slug": "queue-basics",
+      "title": "큐 (Queue)",
+      "order_index": 2,
+      "estimated_minutes": 6,
+      "xp_reward": 15,
+      "concept_tags": ["queue", "fifo", "bfs"],
+      "cards": [
+        {
+          "title": "큐란",
+          "content": "큐(Queue)는 **FIFO (First In, First Out)** 구조입니다. 먼저 넣은 것이 먼저 나옵니다.\n\n```\nenqueue(A) → [A]\nenqueue(B) → [A, B]\ndequeue()  → A 반환, [B]\n```\n\n**실생활 예:** 줄 서기, 프린터 인쇄 대기열, BFS 탐색"
+        },
+        {
+          "title": "큐 vs 스택",
+          "content": "| | 스택 | 큐 |\n|--|------|----|\n| 원리 | LIFO | FIFO |\n| 추가 | push (위) | enqueue (뒤) |\n| 제거 | pop (위) | dequeue (앞) |\n| 활용 | 실행취소, DFS | BFS, 대기열 |"
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "큐는 ___ (First In, First Out) 구조로, 먼저 들어온 데이터가 먼저 나갑니다.",
+            "blank_count": 1
+          },
+          "correct_answer": ["FIFO"],
+          "hint": "줄 서기처럼 먼저 온 사람이 먼저 처리됩니다.",
+          "concept_tags": ["queue", "fifo"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "BFS(너비 우선 탐색)에서 큐 활용 흐름",
+            "steps": ["시작 노드를 큐에 enqueue", "___", "꺼낸 노드의 미방문 인접 노드를 모두 enqueue"],
+            "blank_index": 1,
+            "options": ["큐에서 노드를 dequeue하고 방문 처리", "스택에서 노드를 pop하고 방문 처리", "가장 깊은 노드부터 방문"]
+          },
+          "correct_answer": ["큐에서 노드를 dequeue하고 방문 처리"],
+          "hint": "BFS는 큐, DFS는 스택(또는 재귀)을 사용합니다.",
+          "concept_tags": ["queue", "bfs"],
+          "order_index": 2,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}

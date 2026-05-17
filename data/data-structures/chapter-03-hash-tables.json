@@ -1,0 +1,70 @@
+{
+  "course_slug": "data-structures",
+  "slug": "hash-tables",
+  "title": "해시 테이블 (Hash Tables)",
+  "order_index": 3,
+  "lessons": [
+    {
+      "slug": "hash-table-basics",
+      "title": "해시 테이블이란",
+      "order_index": 1,
+      "estimated_minutes": 8,
+      "xp_reward": 15,
+      "concept_tags": ["hash-table", "hash-function", "key-value"],
+      "cards": [
+        {
+          "title": "해시 테이블의 정의",
+          "content": "해시 테이블은 **키(key)→값(value)** 쌍을 저장하는 자료구조입니다.\n\n**동작 원리:**\n1. key를 해시 함수에 입력\n2. 해시 함수가 배열 인덱스 반환\n3. 해당 인덱스에 value 저장\n\nJavaScript의 `Object`, `Map`이 해시 테이블입니다."
+        },
+        {
+          "title": "해시 테이블의 시간 복잡도",
+          "content": "| 연산 | 평균 | 최악 |\n|------|------|------|\n| 삽입 | O(1) | O(n) |\n| 조회 | O(1) | O(n) |\n| 삭제 | O(1) | O(n) |\n\n최악의 경우는 해시 충돌(collision)이 많을 때 발생합니다."
+        },
+        {
+          "title": "해시 충돌 (Hash Collision)",
+          "content": "다른 key가 같은 인덱스를 가리킬 때 **충돌**이 발생합니다.\n\n**해결 방법:**\n1. **체이닝 (Chaining):** 같은 인덱스에 연결 리스트로 여러 값 저장\n2. **개방 주소법 (Open Addressing):** 충돌 시 다음 빈 슬롯 탐색"
+        }
+      ],
+      "problems": [
+        {
+          "type": "fill_blank",
+          "content": {
+            "question": "해시 테이블에서 key로 value를 조회하는 평균 시간 복잡도는 ___입니다.",
+            "blank_count": 1
+          },
+          "correct_answer": ["O(1)"],
+          "hint": "해시 함수가 인덱스를 바로 계산해주므로 매우 빠릅니다.",
+          "concept_tags": ["hash-table", "time-complexity"],
+          "order_index": 1,
+          "xp_reward": 5
+        },
+        {
+          "type": "logic_flow",
+          "content": {
+            "question": "해시 테이블에서 key로 value를 저장하는 과정",
+            "steps": ["key를 해시 함수에 입력", "___", "해당 인덱스 위치에 value 저장"],
+            "blank_index": 1,
+            "options": ["해시 함수가 배열 인덱스 반환", "해시 함수가 value를 반환", "해시 함수가 key를 정렬"]
+          },
+          "correct_answer": ["해시 함수가 배열 인덱스 반환"],
+          "hint": null,
+          "concept_tags": ["hash-table", "hash-function"],
+          "order_index": 2,
+          "xp_reward": 5
+        },
+        {
+          "type": "drag_order",
+          "content": {
+            "question": "체이닝(Chaining)으로 해시 충돌을 처리하는 과정을 순서대로 정렬하세요.",
+            "items": ["같은 인덱스에 이미 값이 있음을 확인", "해당 인덱스의 연결 리스트 끝에 새 값 추가", "이후 조회 시 연결 리스트를 순회하며 key 비교"]
+          },
+          "correct_answer": ["같은 인덱스에 이미 값이 있음을 확인", "해당 인덱스의 연결 리스트 끝에 새 값 추가", "이후 조회 시 연결 리스트를 순회하며 key 비교"],
+          "hint": null,
+          "concept_tags": ["hash-table", "collision"],
+          "order_index": 3,
+          "xp_reward": 5
+        }
+      ]
+    }
+  ]
+}
