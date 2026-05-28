@@ -47,33 +47,45 @@ function buildGenerationPrompt(topic: string, difficulty: Difficulty, type: Prob
   const typeLabel = TYPE_LABELS[type]
 
   const retryNote = failureReasons?.length
-    ? `\n\n이전 생성 실패 사유:\n${failureReasons.map(r => `- ${r}`).join('\n')}\n위 문제를 반드시 수정하여 재생성하세요.`
+    ? `\n\n이전 생성 실패 사유:\n${failureReasons.map(r => `- ${r}`).join('\n')}\n위 사유를 반드시 수정하여 새로운 문제를 재생성하세요.`
     : ''
 
-  const typeGuide =
+  // 유형별 content 스키마 설명 (예시와 스키마를 분리)
+  const contentSchema =
     type === 'fill_blank'
-      ? `{ "question": "___에 들어갈 단어를 입력하세요. 예: 스택은 ___ 방식의 자료구조다.", "blank_count": 1 }`
+      ? `{ "question": "빈칸(___) 포함 문제 지문", "blank_count": 빈칸_개수(정수) }`
       : type === 'drag_order'
-      ? `{ "question": "다음 항목을 올바른 순서로 배열하세요.", "items": ["항목A", "항목B", "항목C", "항목D"] }`
-      : `{ "question": "다음 흐름에서 빈 단계를 고르세요.", "steps": ["단계1", "___", "단계3"], "blank_index": 1, "options": ["정답", "오답1", "오답2", "오답3"] }`
+      ? `{ "question": "문제 지문", "items": ["정렬 대상 항목1", "항목2", "항목3", "항목4"] }`
+      : `{ "question": "문제 지문", "steps": ["단계1", "___", "단계3", ...], "blank_index": 빈_단계의_인덱스(정수), "options": ["정답", "오답1", "오답2", "오답3"] }`
 
-  return `한국어로 ${topicLabel} ${diffLabel} 난이도 ${typeLabel} 문제를 1개 생성하세요.${retryNote}
+  const correctAnswerGuide =
+    type === 'fill_blank'
+      ? '빈칸 정답 문자열 배열 — 빈칸 순서대로 (예: ["스택", "LIFO"])'
+      : type === 'drag_order'
+      ? 'items를 올바른 순서로 나열한 문자열 배열'
+      : '정답 옵션 문자열 1개짜리 배열 (예: ["페이지 교체"])'
 
-content 형식 (${type}):
-${typeGuide}
+  return `당신은 한국어 컴퓨터과학 교육 문제 출제자입니다.
+아래 조건에 맞는 ${topicLabel} ${typeLabel} 문제 1개를 새로 창작하세요.${retryNote}
 
-correct_answer 형식:
-- fill_blank: 빈칸 정답 문자열 배열 (빈칸 순서대로)
-- drag_order: 올바른 순서의 items 배열
-- logic_flow: 정답 옵션 문자열 1개짜리 배열
+[조건]
+- 과목: ${topicLabel}
+- 난이도: ${diffLabel}
+- 문항 유형: ${typeLabel}
 
-반드시 아래 JSON만 반환하세요 (설명 없이):
+[content 필드 스키마]
+${contentSchema}
+
+[correct_answer 필드]
+${correctAnswerGuide}
+
+반드시 아래 형식의 JSON 객체 하나만 출력하세요. 다른 텍스트는 절대 포함하지 마세요.
 {
   "type": "${type}",
-  "content": ${typeGuide},
-  "correct_answer": ["정답"],
-  "hint": "힌트 한 줄",
-  "concept_tags": ["태그1", "태그2"]
+  "content": { /* 위 스키마에 맞게 실제 문제 내용 */ },
+  "correct_answer": [ /* 위 안내에 맞는 정답 */ ],
+  "hint": "문제 풀이에 도움이 되는 힌트 한 줄",
+  "concept_tags": ["관련 개념 키워드1", "키워드2"]
 }`
 }
 
@@ -92,6 +104,18 @@ ${JSON.stringify(problem, null, 2)}
 passed가 true면 reasons는 빈 배열.`
 }
 
+function extractJson<T>(text: string): T | null {
+  // 가장 바깥의 { } 블록을 추출 (중첩 JSON 안전 파싱)
+  const start = text.indexOf('{')
+  const end = text.lastIndexOf('}')
+  if (start === -1 || end === -1 || end <= start) return null
+  try {
+    return JSON.parse(text.slice(start, end + 1)) as T
+  } catch {
+    return null
+  }
+}
+
 async function generateProblem(topic: string, difficulty: Difficulty, type: ProblemType, failureReasons?: string[]): Promise<GeneratedProblem> {
   const msg = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
@@ -99,9 +123,9 @@ async function generateProblem(topic: string, difficulty: Difficulty, type: Prob
     messages: [{ role: 'user', content: buildGenerationPrompt(topic, difficulty, type, failureReasons) }],
   })
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
-  const jsonMatch = text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('생성 파싱 실패')
-  return JSON.parse(jsonMatch[0]) as GeneratedProblem
+  const parsed = extractJson<GeneratedProblem>(text)
+  if (!parsed) throw new Error('생성 파싱 실패')
+  return parsed
 }
 
 async function validateProblem(problem: GeneratedProblem, difficulty: Difficulty): Promise<ValidationResult> {
@@ -111,9 +135,9 @@ async function validateProblem(problem: GeneratedProblem, difficulty: Difficulty
     messages: [{ role: 'user', content: buildValidationPrompt(problem, difficulty) }],
   })
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
-  const jsonMatch = text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) return { passed: false, reasons: ['검증 파싱 실패'] }
-  return JSON.parse(jsonMatch[0]) as ValidationResult
+  const parsed = extractJson<ValidationResult>(text)
+  if (!parsed) return { passed: false, reasons: ['검증 파싱 실패'] }
+  return parsed
 }
 
 export async function POST(request: Request) {
