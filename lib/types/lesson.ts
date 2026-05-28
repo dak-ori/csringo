@@ -105,6 +105,20 @@ export interface ReviewQueueItem {
   problem?: Problem
 }
 
+export interface GeneratedProblem {
+  id: string
+  user_id: string
+  type: ProblemType
+  topic: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  content: ProblemContent
+  correct_answer: string[]
+  hint: string | null
+  concept_tags: string[]
+  validation_attempts: number
+  created_at: string
+}
+
 export interface SubmitResult {
   correct: boolean
   xp_earned?: number

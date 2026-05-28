@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BookOpen, RotateCcw, User } from 'lucide-react'
+import { Home, BookOpen, RotateCcw, User, Wand2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const tabs = [
   { href: '/dashboard', label: '홈', icon: Home },
   { href: '/learn', label: '학습', icon: BookOpen },
+  { href: '/generate', label: '생성', icon: Wand2 },
   { href: '/review', label: '복습', icon: RotateCcw },
   { href: '/profile', label: '프로필', icon: User },
 ]
