@@ -2,6 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 import { readFileSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 
+// Node 20 has no native WebSocket; suppress realtime init
+// @ts-ignore
+if (!globalThis.WebSocket) globalThis.WebSocket = class {}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 

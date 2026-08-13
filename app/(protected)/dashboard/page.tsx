@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { calculateCurrentHearts } from '@/lib/hearts'
 import { calculateLevel } from '@/lib/xp'
+import { DEMO_ENABLED, DEMO_USER, DEMO_PROFILE } from '@/lib/demo'
 
 interface LessonWithChapter {
   id: string
@@ -24,32 +25,39 @@ interface LessonWithChapter {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+
+  let user = DEMO_ENABLED ? DEMO_USER : (await supabase.auth.getUser()).data.user
   if (!user) redirect('/login')
 
-  const [profileRes, progressRes, reviewRes] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select('username, hearts, hearts_last_refill, streak, total_xp, league')
-      .eq('id', user.id)
-      .single(),
-    supabase
-      .from('user_progress')
-      .select('lesson_id')
-      .eq('user_id', user.id)
-      .eq('status', 'completed'),
-    supabase
-      .from('review_queue')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .is('reviewed_at', null),
-  ])
+  let profile: typeof DEMO_PROFILE | null = null
+  let completedIds = new Set<string>()
+  let reviewCount = 0
 
-  const profile = profileRes.data
-  if (!profile) redirect('/login')
-
-  const completedIds = new Set(progressRes.data?.map(p => p.lesson_id) ?? [])
-  const reviewCount = reviewRes.count ?? 0
+  if (DEMO_ENABLED) {
+    profile = DEMO_PROFILE
+  } else {
+    const [profileRes, progressRes, reviewRes] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('username, hearts, hearts_last_refill, streak, total_xp, league')
+        .eq('id', user.id)
+        .single(),
+      supabase
+        .from('user_progress')
+        .select('lesson_id')
+        .eq('user_id', user.id)
+        .eq('status', 'completed'),
+      supabase
+        .from('review_queue')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .is('reviewed_at', null),
+    ])
+    profile = profileRes.data as typeof DEMO_PROFILE
+    if (!profile) redirect('/login')
+    completedIds = new Set(progressRes.data?.map(p => p.lesson_id) ?? [])
+    reviewCount = reviewRes.count ?? 0
+  }
 
   const { data: allLessons } = await supabase
     .from('lessons')

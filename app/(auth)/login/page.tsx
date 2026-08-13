@@ -1,12 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { LoginButton } from './login-button'
+import { DEMO_ENABLED } from '@/lib/demo'
 
 interface LoginPageProps {
   searchParams: Promise<{ error?: string }>
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  if (DEMO_ENABLED) redirect('/dashboard')
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

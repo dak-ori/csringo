@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { calculateLevel } from '@/lib/xp'
 import { calculateCurrentHearts } from '@/lib/hearts'
+import { DEMO_ENABLED, DEMO_USER, DEMO_PROFILE } from '@/lib/demo'
 
 interface LeagueRankRow {
   user_id: string
@@ -19,40 +20,56 @@ const LEAGUE_LABELS: Record<string, string> = {
   diamond: '💠 다이아몬드',
 }
 
+const DEMO_LEAGUE_ROWS: LeagueRankRow[] = [
+  { user_id: DEMO_USER.id, username: '데모', total_xp: 350, league: 'silver', rank: 1 },
+  { user_id: 'other-1', username: '철수', total_xp: 280, league: 'silver', rank: 2 },
+  { user_id: 'other-2', username: '영희', total_xp: 210, league: 'silver', rank: 3 },
+]
+
 export default async function ProfilePage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
 
-  const [profileRes, progressRes] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select('username, hearts, hearts_last_refill, streak, total_xp, league, created_at')
-      .eq('id', user.id)
-      .single(),
-    supabase
-      .from('user_progress')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('status', 'completed'),
-  ])
+  const userId = DEMO_ENABLED ? DEMO_USER.id : (await supabase.auth.getUser()).data.user?.id
+  if (!userId) redirect('/login')
 
-  const profile = profileRes.data
-  if (!profile) redirect('/login')
+  let profile: typeof DEMO_PROFILE | null = null
+  let completedLessons = 0
+  let leagueRows: LeagueRankRow[] = []
+
+  if (DEMO_ENABLED) {
+    profile = DEMO_PROFILE
+    completedLessons = 3
+    leagueRows = DEMO_LEAGUE_ROWS
+  } else {
+    const [profileRes, progressRes] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('username, hearts, hearts_last_refill, streak, total_xp, league, created_at')
+        .eq('id', userId)
+        .single(),
+      supabase
+        .from('user_progress')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('status', 'completed'),
+    ])
+    profile = profileRes.data
+    if (!profile) redirect('/login')
+    completedLessons = progressRes.count ?? 0
+    const { data } = await supabase.rpc('get_league_rankings', {
+      p_league: profile.league,
+      p_limit: 10,
+    })
+    leagueRows = (data as LeagueRankRow[]) ?? []
+  }
 
   const level = calculateLevel(profile.total_xp)
   const currentHearts = calculateCurrentHearts(
     profile.hearts,
     new Date(profile.hearts_last_refill)
   )
-  const completedLessons = progressRes.count ?? 0
 
-  const { data: leagueRows } = await supabase.rpc('get_league_rankings', {
-    p_league: profile.league,
-    p_limit: 10,
-  })
-
-  const myRank = (leagueRows as LeagueRankRow[] ?? []).find(r => r.user_id === user.id)
+  const myRank = leagueRows.find(r => r.user_id === userId)
 
   return (
     <main className="max-w-lg mx-auto px-4 pt-8 pb-24 space-y-6">
@@ -89,7 +106,7 @@ export default async function ProfilePage() {
             <div
               key={row.user_id}
               className={`flex items-center justify-between p-3 rounded-xl border ${
-                row.user_id === user.id ? 'bg-primary/10 border-primary' : ''
+                row.user_id === userId ? 'bg-primary/10 border-primary' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -97,7 +114,7 @@ export default async function ProfilePage() {
                   #{row.rank}
                 </span>
                 <span className="font-medium">{row.username}</span>
-                {row.user_id === user.id && (
+                {row.user_id === userId && (
                   <span className="text-xs text-primary">(나)</span>
                 )}
               </div>

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 const MAX_ATTEMPTS = 3
 
@@ -76,7 +76,7 @@ function buildGenerationPrompt(topic: string, difficulty: Difficulty, type: Prob
 [content 필드 스키마]
 ${contentSchema}
 
-[correct_answer 필드]
+[correct_answer 필드]1
 ${correctAnswerGuide}
 
 반드시 아래 형식의 JSON 객체 하나만 출력하세요. 다른 텍스트는 절대 포함하지 마세요.
@@ -117,24 +117,18 @@ function extractJson<T>(text: string): T | null {
 }
 
 async function generateProblem(topic: string, difficulty: Difficulty, type: ProblemType, failureReasons?: string[]): Promise<GeneratedProblem> {
-  const msg = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: buildGenerationPrompt(topic, difficulty, type, failureReasons) }],
-  })
-  const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig: { maxOutputTokens: 512 } })
+  const result = await model.generateContent(buildGenerationPrompt(topic, difficulty, type, failureReasons))
+  const text = result.response.text()
   const parsed = extractJson<GeneratedProblem>(text)
   if (!parsed) throw new Error('생성 파싱 실패')
   return parsed
 }
 
 async function validateProblem(problem: GeneratedProblem, difficulty: Difficulty): Promise<ValidationResult> {
-  const msg = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 256,
-    messages: [{ role: 'user', content: buildValidationPrompt(problem, difficulty) }],
-  })
-  const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig: { maxOutputTokens: 256 } })
+  const result = await model.generateContent(buildValidationPrompt(problem, difficulty))
+  const text = result.response.text()
   const parsed = extractJson<ValidationResult>(text)
   if (!parsed) return { passed: false, reasons: ['검증 파싱 실패'] }
   return parsed
